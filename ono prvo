@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hemijska jedinjenja</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background-color: #eef; }
+        input { padding: 8px; margin: 5px; width: 250px; }
+        button { padding: 8px 12px; margin: 5px; }
+        table { margin-top: 20px; border-collapse: collapse; width: 600px; background-color: white; }
+        th, td { border: 1px solid #999; padding: 8px; text-align: center; }
+        th { background-color: #ccc; }
+    </style>
+</head>
+<body>
+    <h2>Dodaj hemijsko jedinjenje</h2>
+    <input type="text" id="nazivInput" placeholder="Naziv jedinjenja">
+    <button onclick="dodajJedinjenje()">Dodaj</button>
+
+    <h3>Pretraga jedinjenja</h3>
+    <input type="text" id="pretragaInput" placeholder="Pretraži po nazivu" oninput="pretraziJedinjenje()">
+
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>Naziv</th>
+                <th>Formula</th>
+                <th>Drugi naziv</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function dodajJedinjenje() {
+            const naziv = document.getElementById("nazivInput").value.trim();
+            if (!naziv) return;
+
+            const formula = prompt(`Unesi formulu za "${naziv}":`);
+            if (!formula) return;
+
+            const drugiNaziv = prompt(`Unesi drugi naziv za "${naziv}" (opciono):`);
+
+            const response = await fetch("/dodaj", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ naziv, formula, drugi_naziv: drugiNaziv })
+            });
+
+            document.getElementById("nazivInput").value = "";
+            pretraziJedinjenje(); // osveži prikaz
+        }
+
+        async function pretraziJedinjenje() {
+            const unos = document.getElementById("pretragaInput").value.trim().toLowerCase();
+            const response = await fetch("/sva-jedinjenja");
+            const jedinjenja = await response.json();
+
+            const filtrirano = jedinjenja.filter(j => j.naziv.toLowerCase().includes(unos));
+            const tbody = document.querySelector("#tabela tbody");
+            tbody.innerHTML = "";
+            for (const j of filtrirano) {
+                const red = document.createElement("tr");
+                red.innerHTML = `
+                    <td>${j.naziv}</td>
+                    <td>${j.formula}</td>
+                    <td>${j.drugi_naziv || "-"}</td>
+                `;
+                tbody.appendChild(red);
+            }
+        }
+
+        // Učitaj sve pri pokretanju
+        pretraziJedinjenje();
+    </script>
+</body>
+</html>
