@@ -72,5 +72,12 @@
         // Učitaj sve pri pokretanju
         pretraziJedinjenje();
     </script>
+    function formatirajFormulu(formula) {
+    return formula.replace(/\d+/g, match => {
+        return [...match].map(cifra => String.fromCharCode(8320 + parseInt(cifra))).join('');
+    });
+}
+</script>
+
 </body>
 </html>
