@@ -40,7 +40,7 @@
 
             const drugiNaziv = prompt(`Unesi drugi naziv za "${naziv}" (opciono):`);
 
-            const response = await fetch("/dodaj", {
+            const response = await fetch("https://lista-hemijskih-jedinjenja.onrender.com/dodaj", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ naziv, formula, drugi_naziv: drugiNaziv })
@@ -52,7 +52,7 @@
 
         async function pretraziJedinjenje() {
             const unos = document.getElementById("pretragaInput").value.trim().toLowerCase();
-            const response = await fetch("/sva-jedinjenja");
+            const response = await fetch("https://lista-hemijskih-jedinjenja.onrender.com/sva-jedinjenja");
             const jedinjenja = await response.json();
 
             const filtrirano = jedinjenja.filter(j => j.naziv.toLowerCase().includes(unos));
